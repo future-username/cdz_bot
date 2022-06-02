@@ -4,7 +4,7 @@ from mesh.answers import *
 
 def auth ():
     url = "https://uchebnik.mos.ru/api/sessions/demo"
-    session_data = {"login": "", "password_hash2": ""}
+    session_data = {"login": "paul995", "password_hash2": "Pa348949"}
 
     session_response = requests.post(
         url = url,
