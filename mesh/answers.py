@@ -20,8 +20,8 @@ def answer_order(answer_data):
     for correct_order_element in order_ids:
         for answer_entry in answer_data["options"]:
             if answer_entry["id"] == correct_order_element:
-                answer += generate_string(answer_entry) + ", "
-    return answer
+                answer += generate_string(answer_entry) + " 🔘 "
+    return answer[:-2]
 
 
 def answer_groups(answer_data):
@@ -34,7 +34,7 @@ def answer_groups(answer_data):
 
         for answer_entry in answer_data["options"]:
             if answer_entry["id"] in group["options_ids"]:
-                group_elements += generate_string(answer_entry) + ",\n\t"
+                group_elements += generate_string(answer_entry) + " 🔘 \n\t"
 
             elif answer_entry["id"] == group["group_id"]:
                 group_name = generate_string(answer_entry)
@@ -59,7 +59,7 @@ def answer_table(answer_data):
 
     for row in answer_dict.values():
         values = row.values()
-        answer += "; ".join(values) + "\n\t"
+        answer += " 🔘 ".join(values) + "\n\t"
     return answer
 
 
@@ -70,7 +70,7 @@ def answer_multiple(answer_data):
     for answer_id in answer_ids:
         for answer_entry in answer_data["options"]:
             if answer_entry["id"] == answer_id:
-                answer += f"{generate_string(answer_entry)}; "
+                answer += f"{generate_string(answer_entry)} 🔘 "
 
     return answer[:-2]
 
@@ -84,7 +84,7 @@ def answer_inline_choice_single(answer_data):
 
         for entry in entry_options:
             if entry["id"] == answer_id["id"]:
-                answer += f"{generate_string(entry)}; "
+                answer += f"{generate_string(entry)} 🔘 "
 
     return answer[:-2]
 
@@ -118,6 +118,6 @@ def answer_gap_match_text(answer_data):
     for answer_id in answer_ids:
         for answer_option in answer_data["options"]:
             if answer_id["id"] == answer_option["id"]:
-                answer += f"{generate_string(answer_option)}; "
+                answer += f"{generate_string(answer_option)} 🔘 "
 
     return answer[:-2]
