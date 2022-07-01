@@ -3,16 +3,11 @@ from functools import cache
 
 
 @cache
-def get_cdz_answers(link: str):
-    try:
-        result_answers = []
-        for all_answers in range(len(get_answers(link))):
-            answers = get_answers(link)
-            [result_answers.append(answer) for answer in answers if answer not in result_answers]
-        return result_answers
-    except:
-        return '⚠️Хм странно, но я ничего не нашел. Проверь правильность ссылки или нажми 👉/help👈'
+def get_cdz_answers(link: str) -> list:
+    result = list()
+    [result.append(answer) for all_answers in range(20) for answer in get_answers(link) if answer not in result]
+    return result
 
-    
-def type_test(link: str):
-    return f'тип: {get_type(link)}, №{get_variant(link)}'
+
+def type_test(link: str) -> str:
+    return f'тип: {get_type(link)} 🔘 №{get_variant(link)}'
