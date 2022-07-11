@@ -1,43 +1,34 @@
-import requests
-import json
+from requests import post, get
+from json import dumps
 from mesh.answers import *
 
 
-def auth():
-    url = "https://uchebnik.mos.ru/api/sessions/demo"
-    session_data = {"login": "", "password_hash2": ""}
+def auth() -> dict:
+    url, session_data = "https://uchebnik.mos.ru/api/sessions/demo", {"login": "", "password_hash2": ""}
 
-    session_response = requests.post(
+    session_response = post(
         url=url,
-        data=json.dumps(session_data),
+        data=dumps(session_data),
         headers={
             "Content-type": "application/json",
             "Accept": "application/json; charset=UTF-8"
         }
     )
-
     return session_response.json()
 
 
-def get_variant(mesh_url):
-    if get_type(mesh_url) == 'spec':
-        return mesh_url.split("/")[7]
-    else:
-        return mesh_url.split("/")[6]
+def get_variant(mesh_url) -> str:
+    return mesh_url.split("/")[7] if get_type(mesh_url) == 'spec' else mesh_url.split("/")[6]
 
 
-def get_type(mesh_url):
-    if mesh_url.split("/")[7] == "homework":
-        return "homework"
-    else:
-        return "spec"
+def get_type(mesh_url: str) -> str:
+    return "homework" if mesh_url.split("/")[7] == "homework" else "spec"
 
 
-def fetch_json(auth_data, mesh_url):
+def fetch_json(auth_data: dict, mesh_url: str) -> dict:
     url = "https://uchebnik.mos.ru/exam/rest/secure/testplayer/group"
 
-    test_variant = get_variant(mesh_url)
-    test_type = get_type(mesh_url)
+    test_variant, test_type = get_variant(mesh_url), get_type(mesh_url)
 
     request_data = {
         "test_type": "training_test",
@@ -49,19 +40,17 @@ def fetch_json(auth_data, mesh_url):
         "profile_id": str(auth_data["id"]),
         "udacl": "resh"
     }
-    task_response = requests.post(
+    task_response = post(
         url=url,
-        data=json.dumps(request_data),
+        data=dumps(request_data),
         cookies=request_cookies,
         headers={"Content-type": "application/json"}
     )
-
     return task_response.json()
 
 
-def fetch_description(mesh_url):
-    auth_data = auth()
-    test_variant = get_variant(mesh_url)
+def fetch_description(mesh_url: str) -> dict:
+    auth_data, test_variant = auth(), get_variant(mesh_url)
     url = f"https://uchebnik.mos.ru/webtests/exam/rest/secure/api/spec/bind/{test_variant}"
 
     request_cookies = {
@@ -72,7 +61,7 @@ def fetch_description(mesh_url):
         "udacl": "resh"
     }
 
-    task_response = requests.get(
+    task_response = get(
         url=url,
         cookies=request_cookies,
         headers={"Content-type": "application/json"}
@@ -86,7 +75,6 @@ def fetch_description(mesh_url):
         "questions_number": response["questions_per_variant_count"],
         "test_id": response["spec_id"]
     }
-
     return description
 
 
@@ -104,32 +92,22 @@ types_of_answers = {
 }
 
 
-def get_answers(url, returnborked=False):
-    answers = []
-    borked = []
+def get_answers(url: str, returnborked=False) -> list:
+    answers, borked, auth_data = [], [], auth()
 
-    auth_data = auth()
     task_answers = fetch_json(auth_data, url)
 
     for exercise in task_answers["training_tasks"]:
-        statement = ""
-        answer = ""
+        statement, answer = '', ''
 
         question_data = exercise["test_task"]["question_elements"]
         answer_data = exercise["test_task"]["answer"]
         answer_type = answer_data["type"]
 
-        for string_chunk in question_data:
-            statement += generate_string(string_chunk)
+        statement += ''.join([generate_string(string_chunk) for string_chunk in question_data])
 
-        if answer_type in types_of_answers:
-            answer = types_of_answers[answer_type](answer_data)
-        else:
-            borked.append([answer_type, question_data, answer_data])
+        answer = types_of_answers[answer_type](answer_data) if answer_type in types_of_answers\
+            else borked.append([answer_type, question_data, answer_data])
 
         answers.append([statement, answer])
-
-    if returnborked:
-        return answers, borked
-    else:
-        return answers
+    return answers if returnborked else answers
