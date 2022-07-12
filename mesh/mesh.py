@@ -110,4 +110,4 @@ def get_answers(url: str, returnborked=False) -> list:
             else borked.append([answer_type, question_data, answer_data])
 
         answers.append([statement, answer])
-    return answers if returnborked else answers
+    return answers, borked if returnborked else answers
