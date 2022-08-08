@@ -9,7 +9,7 @@ from aiogram.utils.executor import start_polling
 
 from core.searching_answers import *
 
-with open("package/client.json", "r") as telegram_data:
+with open("src/package/client.json", "r") as telegram_data:
     data = load(telegram_data)
 basicConfig(level=INFO)
 
@@ -23,7 +23,7 @@ admin_id, id_users = [489951151, 857280061], \
 
 
 def analytics(message: Message) -> None:
-    with open('package/analytics.txt', '+r') as user_id:
+    with open('src/package/analytics.txt', '+r') as user_id:
         if str(message.from_user.id) not in user_id.read():
             user_id.write(f'{message.from_user.id}, {message.from_user.username}, {message.from_user.first_name}\n')
 
@@ -39,7 +39,7 @@ def post(message: Message, final_text='') -> tuple:
 
 @client.message_handler(commands=["start", "help"])
 async def manual(msg: Message):
-    with open("package/client_lock.json", "r") as file:
+    with open("src/package/client_lock.json", "r") as file:
         sys = load(file)
     await msg.answer(f"""👋Привет, {msg.from_user.first_name}.\n
 ❗Для начала работы, отправь мне ссылку на тест и я постараюсь найти ответы.\n📝Пример ссылки: {sys['example']}\n
@@ -54,7 +54,7 @@ async def manual(msg: Message):
 
 @client.message_handler(commands=['admin', 'analytics'])
 async def admin(msg: Message, counter=0):
-    with open("package/analytics.txt", "r") as analytic:
+    with open("src/package/analytics.txt", "r") as analytic:
         if msg.from_user.id in admin_id:
             for number, id_user in enumerate(analytic.readlines()):
                 await msg.answer(f'{number + 1}. User: {id_user}')
