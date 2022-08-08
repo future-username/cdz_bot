@@ -13,7 +13,7 @@ with open("src/package/client.json", "r") as telegram_data:
     data = load(telegram_data)
 basicConfig(level=INFO)
 
-PROXY_URL = 'http://89.208.219.121:8080'
+PROXY_URL = 'HTTP://185.148.223.76:3128'
 bot = Bot(token=data["telegram_token"], proxy=PROXY_URL)
 # bot = Bot(token=data["telegram_token"])
 client = Dispatcher(bot)
