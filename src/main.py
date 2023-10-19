@@ -18,7 +18,7 @@ bot = Bot(token=data["telegram_token"], proxy=PROXY_URL)
 # bot = Bot(token=data["telegram_token"])
 client = Dispatcher(bot)
 
-admin_id, id_users = [489951151, 857280061], \
+admin_id, id_users = [0, 0], \
                      [id_user.split(',')[0] for id_user in open("src/package/analytics.txt", "r")]
 
 
